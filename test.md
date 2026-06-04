@@ -1,15 +1,15 @@
 
-1、搞清楚工作流，熟练使用skills
-2、理解好修改的代码，启动时
-3、CANN接口找到来源
-4、梳理初始化涉及的步骤信息
-5、初始化的时候网络拓扑信息是自发现还是用户输入
-6、外部传入的节点信息都有什么
-7、建立环的逻辑细节是什么
-8、为什么是建立环连接方式
-9、各个节点交换的信息同步了什么
-10、
-msccl++ 的拓扑信息获取主要通过以下几个途径：
+1. 搞清楚工作流，熟练使用skills
+2. 理解好修改的代码，启动时
+3. CANN接口找到来源
+4. 梳理初始化涉及的步骤信息
+5. 初始化的时候网络拓扑信息是自发现还是用户输入
+6. 外部传入的节点信息都有什么
+7. 建立环的逻辑细节是什么
+8. 为什么是建立环连接方式
+9. 各个节点交换的信息同步了什么
+
+## msccl++ 的拓扑信息获取主要通过以下几个途径：
 1. 同节点判断 — TcpBootstrap::getNranksPerNode() (bootstrap.cc:434-451) 通过 allGather 交换所有 rank 的 IP 地址，IP 相同的 rank 被认为在同一节点上。
 2. GPU NUMA 亲和性 — numa.cc 用 cudaDeviceGetPCIBusId 获取 GPU 的 PCI Bus ID，再从 /sys/bus/pci/devices/<busId>/numa_node 读 sysfs 得到 NUMA node，用于线程绑定优化。
 3. IB 设备发现 — ib.cc 用 ibv_get_device_list 枚举系统上的 IB 设备，通过 ibv_query_device/ibv_query_port 查询端口状态、链路层类型(Ethernet/InfiniBand)、RDMA atomics 能力等。Transport::IB0-IB7 按索引映射到对应 IB 设备，也可通过 MSCCLPP_HCA_DEVICES 环境变量覆盖。
