@@ -8,7 +8,7 @@
 7. 建立环的逻辑细节是什么
 8. 为什么是建立环连接方式
 9. 各个节点交换的信息同步了什么
-
+WrqkeekRyzQRTfV6pSTAeDFz
 ## msccl++ 的拓扑信息获取主要通过以下几个途径：
 1. 同节点判断 — TcpBootstrap::getNranksPerNode() (bootstrap.cc:434-451) 通过 allGather 交换所有 rank 的 IP 地址，IP 相同的 rank 被认为在同一节点上。
 2. GPU NUMA 亲和性 — numa.cc 用 cudaDeviceGetPCIBusId 获取 GPU 的 PCI Bus ID，再从 /sys/bus/pci/devices/<busId>/numa_node 读 sysfs 得到 NUMA node，用于线程绑定优化。
