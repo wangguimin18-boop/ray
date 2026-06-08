@@ -57,3 +57,20 @@ auto conn = communicator.connect(EndpointConfig(Transport::IB0), remoteRank, tag
 - 用 tag 区分同一对 rank 间的多条连接
 例如一个 allreduce 实现，用户可以为每个 rank 建立 ring 连接做 reduce-scatter，再建立另一组 ring 连接做 allgather——这是用户定义的 ring，和 Bootstrap 的 ring 无关。也可以做 tree、mesh、任意拓扑，全由用户编排。
 总结：Bootstrap ring = 初始化协调用的临时通道；运行时拓扑 = 用户完全自主决定。
+其实 msccl++ 已经用了你说的方案的一半——前半段确实是星形：
+- 所有 rank 向 root 上报 ExtInfo（星形）
+- root 收齐后把每个 rank 的右邻居地址发给它（还是星形）
+你的想法完全可行：root 直接把全部 n 个地址表发给每个 rank，就不需要环形 allGather 了。但 msccl++ 没这么做，原因是：
+Root 的负载压力。对比两种方案：
+ 	星形全分发
+Root 发送量	n × n × sizeof(SocketAddress)
+每个 rank 发送量	0
+Root 连接数	收 n 个 + 发 n 个 = 2n
+负载分布	Root 独扛所有分发
+n 小的时候两种都行，但 n=128+ 时 root 要发送 128×128=16384 个地址，而环形 allGather 让每个 rank 只发 127 个地址，root 只发 128 个右邻居地址。负载从 root 转移到了所有 rank。
+而且代码里已经考虑了这一点——bootstrap.cc:402-404：
+if (nRanks_ > 128) {
+  randomSleep(rank_);  // stagger connection times to avoid an overload of the root
+}
+当 rank 数超过 128 时还要 stagger 连接避免 root 过载，可见 root 已经是瓶颈了，再让它分发全量地址会更严重。
+所以设计是：星形收集（轻量）+ 环形分发（分散负载），而非全程星形。
