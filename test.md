@@ -57,6 +57,8 @@ auto conn = communicator.connect(EndpointConfig(Transport::IB0), remoteRank, tag
 - 用 tag 区分同一对 rank 间的多条连接
 例如一个 allreduce 实现，用户可以为每个 rank 建立 ring 连接做 reduce-scatter，再建立另一组 ring 连接做 allgather——这是用户定义的 ring，和 Bootstrap 的 ring 无关。也可以做 tree、mesh、任意拓扑，全由用户编排。
 总结：Bootstrap ring = 初始化协调用的临时通道；运行时拓扑 = 用户完全自主决定。
+为什么是创建环形链接，不能是所有rank都和root建立链接，rank向root报道后，root告诉所有rank每个rank的信息不就行了吗
++ Thought: 33.1s
 其实 msccl++ 已经用了你说的方案的一半——前半段确实是星形：
 - 所有 rank 向 root 上报 ExtInfo（星形）
 - root 收齐后把每个 rank 的右邻居地址发给它（还是星形）
