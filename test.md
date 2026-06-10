@@ -8,6 +8,15 @@
 7. 建立环的逻辑细节是什么
 8. 为什么是建立环连接方式
 9. 各个节点交换的信息同步了什么
+
+
+10. 20260610代办事项
+1.晚上可信C++专业级科目一考试
+2.下午小组例会
+3.上午进展例会
+4.完成代码编译，理解编译流程
+5.理解msccl++后续逻辑，做好讲解
+
 WrqkeekRyzQRTfV6pSTAeDFz
 ## msccl++ 的拓扑信息获取主要通过以下几个途径：
 1. 同节点判断 — TcpBootstrap::getNranksPerNode() (bootstrap.cc:434-451) 通过 allGather 交换所有 rank 的 IP 地址，IP 相同的 rank 被认为在同一节点上。
