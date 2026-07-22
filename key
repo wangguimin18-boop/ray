@@ -48,3 +48,33 @@ MAAS平台： 火山
 
 
 由用户【朱子薇 00570546】发送，发送 免打扰 拒收类似的通知消息
+
+
+替换配置信息中第 9行的 apiKey
+{
+	"$schema": "https://opencode.ai/config.json",
+	"provider": {
+		"huoshan": {
+			"npm": "@ai-sdk/openai-compatible",
+			"name": "蓝区火山",
+			"options": {
+				"baseURL": "https://ark.cn-beijing.volces.com/api/v3",
+				"apiKey": "ark-xxx"
+			},
+			"models": {
+				"deepseek-v4-pro-260425": {
+					"name": "DeepSeek V4 Pro"
+				},
+				"deepseek-v4-flash-260425": {
+					"name": "DeepSeek V4 Flash"
+				},
+				"doubao-seed-2-1-pro-260628": {
+					"name": "Doubao Seed 2.1 Pro"
+				},
+				"glm-5-2-260617": {
+					"name": "GLM 5.2"
+				}
+			}
+		}
+	}
+}
